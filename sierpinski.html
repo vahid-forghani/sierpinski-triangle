@@ -1,0 +1,63 @@
+<html>
+  <head>
+    <title>sierpinski fractal</title>
+  </head>
+  <body>
+    <canvas id="koch" style="background-color: black"></canvas>
+    <script>
+      var koch = document.getElementById("koch");
+      var width = window.innerWidth - 20;
+      var height = window.innerHeight - 20;
+      koch.setAttribute("width", width);
+      koch.setAttribute("height", height);
+      var ctx = koch.getContext("2d");
+      ctx.beginPath();
+      ctx.strokeStyle = "#00FF00";
+
+      var point1 = [width / 3, height - height / 3];
+      var point2 = [width - width / 3, height - height / 3];
+      var point3 = calculate3rdVertexOfEquilateralTriangle(point1, point2);
+
+      drawSierpinski(point1, point2, point3, 5);
+
+      function drawSierpinski(a, b, c, step) {
+
+        drawLine(a, b);
+        drawLine(b, c);
+        drawLine(c, a);
+
+        if (step > 0) {
+          var point1 = calculateMiddlePointOfTheLine(a, b);
+          var point2 = calculateMiddlePointOfTheLine(b, c);
+          var point3 = calculateMiddlePointOfTheLine(c, a);
+          drawSierpinski(a, point1, point3, step - 1);
+          drawSierpinski(b, point1, point2, step - 1);
+          drawSierpinski(c, point2, point3, step - 1);
+        }
+      }
+
+      function drawLine(a, b) {
+        setTimeout(() => {
+          ctx.moveTo(a[0], a[1]);
+          ctx.lineTo(b[0], b[1]);
+          ctx.stroke();
+        }, Math.random() * 1000);
+      }
+
+      function calculateMiddlePointOfTheLine(point1, point2) {
+        return [point1[0] + (point2[0] - point1[0]) / 2, point1[1] + (point2[1] - point1[1]) / 2];
+      }
+
+      function calculate3rdVertexOfEquilateralTriangle(point1, point2) {
+        return [
+          Math.cos(Math.PI / 3) * (point1[0] - point2[0]) -
+            Math.sin(Math.PI / 3) * (point1[1] - point2[1]) +
+            point2[0],
+          Math.sin(Math.PI / 3) * (point1[0] - point2[0]) +
+            Math.cos(Math.PI / 3) * (point1[1] - point2[1]) +
+            point2[1],
+        ];
+      }
+    </script>
+  </body>
+</html>
